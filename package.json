@@ -1,0 +1,24 @@
+{
+  "name": "hyper-status-versatile",
+  "version": "0.1.0",
+  "description": "Status line plugin for hyper that displays various information",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asny23/hyper-status-versatile.git"
+  },
+  "keywords": [
+    "hyper",
+    "hyperterm",
+    "statusline"
+  ],
+  "author": "yun asny23",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asny23/hyper-status-versatile/issues"
+  },
+  "homepage": "https://github.com/asny23/hyper-status-versatile#readme"
+}
