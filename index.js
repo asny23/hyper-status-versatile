@@ -1,9 +1,14 @@
 const { exec } = require('child_process')
 
+const state = {
+  cwd: '',
+}
+
 let pid
 
 const setCwd = (pid) => {
   exec(`lsof -p ${pid} | awk '$4=="cwd"' | tr -s ' ' | cut -d ' ' -f9-`, (_err, stdout) => {
+    state.cwd = stdout.trim()
     console.log(`cwd=${stdout.trim()}`)
   })
 }
@@ -49,6 +54,7 @@ exports.decorateHyper = (Hyper, { React }) => {
   return class extends React.PureComponent {
     constructor(props) {
       super(props)
+      this.state = state
     }
 
     render() {
@@ -60,7 +66,8 @@ exports.decorateHyper = (Hyper, { React }) => {
         Object.assign({}, this.props, {
           customInnerChildren: existingChildren.concat(
             React.createElement('footer', { className: 'hyper-status-versatile' },
-              React.createElement('div', { className: 'sample', title: 'sample title' }, 'this is sample!')
+              React.createElement('div', { className: 'sample', title: 'sample title' }, 'this is sample!'),
+              React.createElement('div', { className: 'cwd', title: 'cwd' }, this.state.cwd)
             )
           )
         })
