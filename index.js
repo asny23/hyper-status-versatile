@@ -4,13 +4,23 @@ const state = {
   cwd: '',
 }
 
+const directoryRegex = /([a-zA-Z]:[^\:\[\]\?\"\<\>\|\u001b]+)/im
+const escapeRegex = /[\u0000-\u001f]/g
 let pid
 
-const setCwd = (pid) => {
-  exec(`lsof -p ${pid} | awk '$4=="cwd"' | tr -s ' ' | cut -d ' ' -f9-`, (_err, stdout) => {
-    state.cwd = stdout.trim()
-    console.log(`cwd=${stdout.trim()}`)
-  })
+const setCwd = (pid, action) => {
+  if (process.platform == 'win32') {
+    if (action && action.data) {
+      let path = directoryRegex.exec(action.data)
+      if(path) {
+        state.cwd = path[0].replaceAll(escapeRegex, '')
+      }
+    }
+  } else {
+    exec(`lsof -p ${pid} | awk '$4=="cwd"' | tr -s ' ' | cut -d ' ' -f9-`, (_err, stdout) => {
+      state.cwd = stdout.trim()
+    })
+  }
 }
 
 exports.middleware = (store) => (next) => (action) => {
@@ -18,10 +28,10 @@ exports.middleware = (store) => (next) => (action) => {
   if (action.type === 'SESSION_SET_XTERM_TITLE') {
     pid = uids[action.uid].pid
   }
-  if (action.type === 'SESSION_USER_DATA') {
+  if (action.type === 'SESSION_ADD_DATA') {
     const { data } = action
     if (data.indexOf("\r") >= 0) {
-      setCwd(pid)
+      setCwd(pid, action)
     }
   }
   next(action)
