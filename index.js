@@ -83,5 +83,17 @@ exports.decorateHyper = (Hyper, { React }) => {
         })
       )
     }
+
+    componentDidMount() {
+      this.interval = setInterval(() => {
+        this.setState({
+          cwd: state.cwd
+        })
+      }, 1000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval)
+    }
   }
 }
